@@ -7,10 +7,9 @@ DEFAULT_ENDPOINT = "http://localhost:8080"
 def main():
     args = parser.get_args()
 
-    our_file = open(args.filepath,'r')
     # TODO: this is dangerous if the file is TOO large
-    file_contents = our_file.read()
-    our_file.close()
+    with open(args.filepath, 'rb') as f:
+        file_contents = f.read()
 
     endpoint = args.endpoint if args.endpoint else DEFAULT_ENDPOINT
     request = url.Request(endpoint)
@@ -21,9 +20,10 @@ def main():
             "filename":args.filename,
             "file":file_contents
         }
-    data = urllib.urlencode(http_args)
 
+    data = urllib.urlencode(http_args)
     resp = url.urlopen(request, data)
+
     out = resp.read()
     print out 
 
