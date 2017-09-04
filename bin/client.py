@@ -1,6 +1,7 @@
 import parser
 import urllib
 import urllib2 as url
+import json
 
 DEFAULT_ENDPOINT = "http://localhost:8080"
 
@@ -44,8 +45,8 @@ def main():
     request = url.Request(endpoint)
     resp = url.urlopen(request, data)
 
-    out = resp.read()
-    print out 
+    json_data = json.load(resp)
+    print json_data
 
 if __name__ == "__main__":
     main()
