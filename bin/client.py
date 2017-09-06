@@ -1,9 +1,6 @@
+import argparse
 import parser
-import urllib
-import urllib2 as url
-import json
-
-DEFAULT_ENDPOINT = "http://localhost:8080"
+import requests
 
 def getFilename(path):
     if path is None:
@@ -27,11 +24,11 @@ def main():
     filename = args.filename if args.filename else getFilename(args.filepath)
 
     if not args.user:
-        raise ValueError("Missing user!")
+        raise argparse.ArgumentTypeError("Missing user!")
 
     if (not args.secret_key or not filename) and args.method != "list-all":
-        raise ValueError("Does not contain all necessary arguments")
-    
+        raise argparse.ArgumentTypeError("Missing secret key or filename or filepath")
+
     http_args = {
             "method":args.method,
             "decentralized-db-user":args.user,
@@ -40,12 +37,11 @@ def main():
             "file":file_contents
     }
 
-    data = urllib.urlencode(http_args)
-    endpoint = args.endpoint if args.endpoint else DEFAULT_ENDPOINT
-    request = url.Request(endpoint)
-    resp = url.urlopen(request, data)
+    resp = requests.get(args.endpoint, http_args)
+    if resp.status_code != requests.codes.ok:
+        resp.raise_for_status()
 
-    json_data = json.load(resp)
+    json_data = resp.json()
     print json_data
 
 if __name__ == "__main__":
