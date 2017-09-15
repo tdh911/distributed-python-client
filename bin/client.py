@@ -1,6 +1,7 @@
 import argparse
 import parser
 import requests
+import output
 
 def getFilename(path):
     if path is None:
@@ -42,7 +43,11 @@ def main():
         resp.raise_for_status()
 
     json_data = resp.json()
-    print json_data
+
+    if args.method == "read":
+        json_data['filename'] = filename
+
+    output.format_output(json_data)
 
 if __name__ == "__main__":
     main()
